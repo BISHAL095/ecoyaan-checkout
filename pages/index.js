@@ -99,7 +99,7 @@ export default function Cart({ data }) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:3000/api/cart");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/cart`);
   const data = await res.json();
 
   return {
