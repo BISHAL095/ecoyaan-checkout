@@ -112,16 +112,27 @@ export default function Cart({ cart }) {
   );
 }
 
-// Fetch cart data on the server before rendering the page
 export async function getServerSideProps() {
-
-  const baseUrl =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
-
-  const res = await fetch(`${baseUrl}/api/cart`);
-  const cart = await res.json();
+  const cart = {
+    cartItems: [
+      {
+        product_id: 101,
+        product_name: "Bamboo Toothbrush (Pack of 4)",
+        product_price: 299,
+        quantity: 2,
+        image: "https://via.placeholder.com/150"
+      },
+      {
+        product_id: 102,
+        product_name: "Reusable Cotton Produce Bags",
+        product_price: 450,
+        quantity: 1,
+        image: "https://via.placeholder.com/150"
+      }
+    ],
+    shipping_fee: 50,
+    discount_applied: 0
+  };
 
   return {
     props: { cart }
