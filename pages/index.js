@@ -2,19 +2,32 @@ import { useContext, useEffect } from "react";
 import { CheckoutContext } from "../context/CheckoutContext";
 import Link from "next/link";
 
-export default function Cart({ data }) {
+export default function Cart({ cart }) {
   const { setCart } = useContext(CheckoutContext);
 
+  // Store cart items in global context for later checkout steps
   useEffect(() => {
-    setCart(data.cartItems);
-  }, []);
+    if (cart?.cartItems) {
+      setCart(cart.cartItems);
+    }
+  }, [cart, setCart]);
 
-  const subtotal = data.cartItems.reduce(
+  // Prevent crash if cart data is not yet available
+  if (!cart || !cart.cartItems) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg">Loading cart...</p>
+      </div>
+    );
+  }
+
+  // Calculate subtotal from cart items
+  const subtotal = cart.cartItems.reduce(
     (acc, item) => acc + item.product_price * item.quantity,
     0
   );
 
-  const total = subtotal + data.shipping_fee;
+  const total = subtotal + cart.shipping_fee;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -26,13 +39,14 @@ export default function Cart({ data }) {
         {/* Cart Items */}
         <div className="md:col-span-2 bg-white rounded-xl shadow p-6">
 
-          {data.cartItems.map((item) => (
+          {cart.cartItems.map((item) => (
             <div
               key={item.product_id}
               className="flex items-center gap-6 border-b py-4"
             >
               <img
                 src={item.image}
+                alt={item.product_name}
                 className="w-24 h-24 object-cover rounded-lg"
               />
 
@@ -74,7 +88,7 @@ export default function Cart({ data }) {
 
             <div className="flex justify-between text-gray-600">
               <span>Shipping</span>
-              <span>₹{data.shipping_fee}</span>
+              <span>₹{cart.shipping_fee}</span>
             </div>
 
             <div className="border-t pt-3 flex justify-between font-bold text-lg">
@@ -98,11 +112,18 @@ export default function Cart({ data }) {
   );
 }
 
+// Fetch cart data on the server before rendering the page
 export async function getServerSideProps() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/cart`);
-  const data = await res.json();
+
+  const baseUrl =
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+
+  const res = await fetch(`${baseUrl}/api/cart`);
+  const cart = await res.json();
 
   return {
-    props: { data },
+    props: { cart }
   };
 }
