@@ -1,40 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Ecoyaan Checkout Flow
 
-## Getting Started
+This project implements a simple multi-step checkout flow using Next.js.
+It was built as a functional MVP to demonstrate a clean architecture and
+working checkout experience.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-   Server-side rendered cart page
+-   Multi-step checkout flow:
+    -   Cart
+    -   Shipping
+    -   Payment
+    -   Success
+-   Form validation for shipping details
+-   Global checkout state using React Context
+-   Styled UI using Tailwind CSS
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+------------------------------------------------------------------------
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Architecture
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+The application is built using **Next.js** with a simple page-based
+routing system.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Key architectural choices
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Server Side Rendering (SSR)
 
-## Learn More
+The cart page uses `getServerSideProps` to fetch cart data from the API
+on each request. This ensures the cart contents are always fresh when
+the page loads.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. React Context for Checkout State
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+A global `CheckoutContext` is used to share state between checkout
+steps:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+-   Cart items
+-   Shipping address
 
-## Deploy on Vercel
+This avoids prop drilling and keeps state management simple.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Page-Based Checkout Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Each step of the checkout is implemented as a separate page.
+
+    /pages
+      cart.js
+      shipping.js
+      payment.js
+      success.js
+
+Navigation between steps is handled using Next.js routing.
+
+### 4. Simple API Layer
+
+    /pages/api/cart.js
+
+This endpoint simulates fetching cart data for the cart page.
+
+### 5. Styling
+
+The UI is styled using Tailwind CSS for fast development and consistent
+design.
+
+------------------------------------------------------------------------
+
+## Project Structure
+
+    pages/
+      api/
+        cart.js
+      cart.js
+      shipping.js
+      payment.js
+      success.js
+
+    context/
+      CheckoutContext.js
+
+    styles/
+      globals.css
+
+------------------------------------------------------------------------
+
+## Running the Project Locally
+
+### 1. Clone the repository
+
+    git clone <repository-url>
+    cd ecoyaan-checkout
+
+### 2. Install dependencies
+
+    npm install
+
+### 3. Run the development server
+
+    npm run dev
+
+### 4. Open the application
+
+Open your browser and go to:
+
+    http://localhost:3000
+
+You can start the checkout flow from the cart page.
+
+------------------------------------------------------------------------
+
+## Notes
+
+This implementation focuses on delivering a **working MVP** with a clear
+architecture rather than a production-ready checkout system.
+
+Features like authentication, payment gateway integration, and database
+persistence are intentionally out of scope for this assignment.
